@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import G9.Foodi.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,11 +17,13 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret:foodiSecretKey}")
-    private String secret;
 
-    @Value("${jwt.expiration:3600000}") // 1 hour default
-    private long jwtExpiration;
+    private final JwtConfig jwtConfig;
+
+    // Constructor Injection (không cần @Autowired nếu chỉ có một constructor)
+    public JwtUtil(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -63,12 +65,12 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration()))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     private Key getSignKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
     }
-} 
+}

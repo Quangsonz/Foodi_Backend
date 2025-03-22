@@ -16,4 +16,4 @@ public class JwtService {
         String token = jwtUtil.generateToken(username);
         return new JwtResponse(token);
     }
-} 
+}
