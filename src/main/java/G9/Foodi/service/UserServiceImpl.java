@@ -9,7 +9,6 @@ import G9.Foodi.dto.UserDto;
 import G9.Foodi.model.User;
 import G9.Foodi.model.User.Role;
 import G9.Foodi.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserDto userDto) {
-        if(userRepository.existsByEmail(userDto.getEmail())) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new IllegalArgumentException("User already exists with email: " + userDto.getEmail());
         }
         
@@ -38,9 +37,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        if(!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User not found with id: " + id);
+    public void deleteUser(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
     }
@@ -48,17 +47,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isAdmin(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
         
         return Role.ADMIN.equals(user.getRole());
     }
 
     @Override
-    public User makeAdmin(Long id) {
+    public User makeAdmin(String id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         
         user.setRole(Role.ADMIN);
         return userRepository.save(user);
     }
-} 
+}

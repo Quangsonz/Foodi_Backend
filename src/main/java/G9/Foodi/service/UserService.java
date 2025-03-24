@@ -8,7 +8,7 @@ import G9.Foodi.model.User;
 public interface UserService {
     List<User> getAllUsers();
     User createUser(UserDto userDto);
-    void deleteUser(Long id);
+    void deleteUser(String id);
     boolean isAdmin(String email);
-    User makeAdmin(Long id);
-} 
+    User makeAdmin(String id);
+}

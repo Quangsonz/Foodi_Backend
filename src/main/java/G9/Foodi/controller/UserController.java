@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import G9.Foodi.dto.UserDto;
 import G9.Foodi.model.User;
 import G9.Foodi.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -42,11 +41,11 @@ public class UserController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         try {
             userService.deleteUser(id);
             return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -63,11 +62,11 @@ public class UserController {
     }
     
     @PutMapping("/admin/{id}")
-    public ResponseEntity<User> makeAdmin(@PathVariable Long id) {
+    public ResponseEntity<User> makeAdmin(@PathVariable String id) {
         try {
             return ResponseEntity.ok(userService.makeAdmin(id));
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
-} 
+}

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import G9.Foodi.model.Menu;
 import G9.Foodi.repository.MenuRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -26,21 +25,21 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public void deleteMenuItem(Long id) {
+    public void deleteMenuItem(String id) {
         if (!menuRepository.existsById(id)) {
-            throw new EntityNotFoundException("Menu item not found with id: " + id);
+            throw new IllegalArgumentException("Menu item not found with id: " + id);
         }
         menuRepository.deleteById(id);
     }
 
     @Override
-    public Menu getMenuItemById(Long id) {
+    public Menu getMenuItemById(String id) {
         return menuRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Menu item not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Menu item not found with id: " + id));
     }
 
     @Override
-    public Menu updateMenuItem(Long id, Menu menuDetails) {
+    public Menu updateMenuItem(String id, Menu menuDetails) {
         Menu menu = getMenuItemById(id);
         
         menu.setName(menuDetails.getName());
@@ -51,4 +50,4 @@ public class MenuServiceImpl implements MenuService {
         
         return menuRepository.save(menu);
     }
-} 
+}

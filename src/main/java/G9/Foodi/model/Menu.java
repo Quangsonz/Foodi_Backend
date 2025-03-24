@@ -2,26 +2,19 @@ package G9.Foodi.model;
 
 import java.util.Date;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "menus")
+@Document(collection = "menu")
 public class Menu {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // Sử dụng String thay vì Long cho MongoDB
 
-    @Column(nullable = false)
     private String name;
-
     private String recipe;
     private String image;
     private String category;
     private Double price;
-
-    @CreationTimestamp
     private Date createdAt;
 
     // Constructor không tham số
@@ -29,7 +22,7 @@ public class Menu {
     }
 
     // Constructor đầy đủ tham số
-    public Menu(Long id, String name, String recipe, String image, String category, Double price, Date createdAt) {
+    public Menu(String id, String name, String recipe, String image, String category, Double price, Date createdAt) {
         this.id = id;
         this.name = name;
         this.recipe = recipe;
@@ -40,11 +33,11 @@ public class Menu {
     }
 
     // Getter và Setter
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -100,7 +93,7 @@ public class Menu {
     @Override
     public String toString() {
         return "Menu{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", recipe='" + recipe + '\'' +
                 ", image='" + image + '\'' +

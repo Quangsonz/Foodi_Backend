@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import G9.Foodi.dto.CartDto;
 import G9.Foodi.model.Cart;
 import G9.Foodi.service.CartService;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/carts")
@@ -43,36 +41,36 @@ public class CartController {
     public ResponseEntity<?> addToCart(@RequestBody CartDto cartDto) {
         try {
             return new ResponseEntity<>(cartService.addToCart(cartDto), HttpStatus.CREATED);
-        } catch (EntityExistsException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCart(@PathVariable String id) {
         try {
             cartService.deleteCart(id);
             return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
+    public ResponseEntity<Cart> getCartById(@PathVariable String id) {
         try {
             return ResponseEntity.ok(cartService.getCartById(id));
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Cart> updateCart(@PathVariable Long id, @RequestBody CartDto cartDto) {
+    public ResponseEntity<Cart> updateCart(@PathVariable String id, @RequestBody CartDto cartDto) {
         try {
             return ResponseEntity.ok(cartService.updateCart(id, cartDto));
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
-} 
+}

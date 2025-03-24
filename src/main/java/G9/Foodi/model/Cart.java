@@ -1,26 +1,19 @@
 package G9.Foodi.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "carts")
+@Document(collection = "carts")
 public class Cart {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // Sử dụng String thay vì Long cho MongoDB
 
-    @Column(name = "menu_item_id")
     private String menuItemId;
-
-    @Column(nullable = false)
     private String name;
-
     private String recipe;
     private String image;
     private Double price;
     private Integer quantity;
-
-    @Column(nullable = false)
     private String email;
 
     // Constructor không tham số
@@ -28,7 +21,7 @@ public class Cart {
     }
 
     // Constructor đầy đủ tham số
-    public Cart(Long id, String menuItemId, String name, String recipe, String image, Double price, Integer quantity, String email) {
+    public Cart(String id, String menuItemId, String name, String recipe, String image, Double price, Integer quantity, String email) {
         this.id = id;
         this.menuItemId = menuItemId;
         this.name = name;
@@ -40,11 +33,11 @@ public class Cart {
     }
 
     // Getter và Setter
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -108,7 +101,7 @@ public class Cart {
     @Override
     public String toString() {
         return "Cart{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", menuItemId='" + menuItemId + '\'' +
                 ", name='" + name + '\'' +
                 ", recipe='" + recipe + '\'' +

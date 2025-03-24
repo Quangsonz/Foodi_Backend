@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import G9.Foodi.model.Menu;
 import G9.Foodi.service.MenuService;
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/menu")
@@ -36,30 +35,30 @@ public class MenuController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMenuItem(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable String id) {
         try {
             menuService.deleteMenuItem(id);
             return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Menu> getMenuItemById(@PathVariable Long id) {
+    public ResponseEntity<Menu> getMenuItemById(@PathVariable String id) {
         try {
             return ResponseEntity.ok(menuService.getMenuItemById(id));
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Menu> updateMenuItem(@PathVariable Long id, @RequestBody Menu menuDetails) {
+    public ResponseEntity<Menu> updateMenuItem(@PathVariable String id, @RequestBody Menu menuDetails) {
         try {
             return ResponseEntity.ok(menuService.updateMenuItem(id, menuDetails));
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
-} 
+}

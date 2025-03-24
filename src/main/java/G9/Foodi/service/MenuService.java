@@ -7,7 +7,7 @@ import G9.Foodi.model.Menu;
 public interface MenuService {
     List<Menu> getAllMenuItems();
     Menu createMenuItem(Menu menu);
-    void deleteMenuItem(Long id);
-    Menu getMenuItemById(Long id);
-    Menu updateMenuItem(Long id, Menu menuDetails);
-} 
+    void deleteMenuItem(String id);
+    Menu getMenuItemById(String id);
+    Menu updateMenuItem(String id, Menu menuDetails);
+}

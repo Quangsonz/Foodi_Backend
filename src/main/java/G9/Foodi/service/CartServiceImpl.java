@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import G9.Foodi.dto.CartDto;
 import G9.Foodi.model.Cart;
 import G9.Foodi.repository.CartRepository;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -26,7 +24,7 @@ public class CartServiceImpl implements CartService {
     public Cart addToCart(CartDto cartDto) {
         // Kiểm tra xem item đã tồn tại trong giỏ hàng chưa
         if (cartRepository.findByEmailAndMenuItemId(cartDto.getEmail(), cartDto.getMenuItemId()).isPresent()) {
-            throw new EntityExistsException("Product already exists in the cart!");
+            throw new IllegalArgumentException("Product already exists in the cart!");
         }
         
         Cart cart = new Cart();
@@ -42,15 +40,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCart(Long id) {
+    public void deleteCart(String id) {
         if (!cartRepository.existsById(id)) {
-            throw new EntityNotFoundException("Cart item not found with id: " + id);
+            throw new IllegalArgumentException("Cart item not found with id: " + id);
         }
         cartRepository.deleteById(id);
     }
 
     @Override
-    public Cart updateCart(Long id, CartDto cartDto) {
+    public Cart updateCart(String id, CartDto cartDto) {
         Cart cart = getCartById(id);
         
         cart.setMenuItemId(cartDto.getMenuItemId());
@@ -65,8 +63,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCartById(Long id) {
+    public Cart getCartById(String id) {
         return cartRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cart item not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Cart item not found with id: " + id));
     }
-} 
+}

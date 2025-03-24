@@ -1,22 +1,16 @@
 package G9.Foodi.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "users")
+@Document(collection = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // Sử dụng String thay vì Long cho MongoDB
 
     private String name;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
     private String photoURL;
-
-    @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
     // Enum Role
@@ -29,7 +23,7 @@ public class User {
     }
 
     // Constructor đầy đủ tham số
-    public User(Long id, String name, String email, String photoURL, Role role) {
+    public User(String id, String name, String email, String photoURL, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -38,11 +32,11 @@ public class User {
     }
 
     // Getter và Setter
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -82,7 +76,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", photoURL='" + photoURL + '\'' +
