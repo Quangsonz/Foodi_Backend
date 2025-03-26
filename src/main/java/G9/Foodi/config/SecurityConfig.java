@@ -27,9 +27,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/jwt", "/api/v1/menu/**").permitAll()
+                        .requestMatchers("/api/v1/jwt/**").permitAll()
+                        .requestMatchers("/api/v1/menu/**").permitAll()
                         .requestMatchers("/api/v1/users/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/v1/carts/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                // Đảm bảo yêu cầu OPTIONS không bị chặn bởi Spring Security
+                .securityMatcher("/**") // Áp dụng cho tất cả các request
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -38,13 +43,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173"); // React frontend
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("DELETE");
+        configuration.addAllowedMethod("OPTIONS");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-} 
+}

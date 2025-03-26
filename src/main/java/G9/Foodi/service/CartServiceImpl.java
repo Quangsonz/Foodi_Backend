@@ -22,21 +22,24 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart addToCart(CartDto cartDto) {
-        // Kiểm tra xem item đã tồn tại trong giỏ hàng chưa
-        if (cartRepository.findByEmailAndMenuItemId(cartDto.getEmail(), cartDto.getMenuItemId()).isPresent()) {
-            throw new IllegalArgumentException("Product already exists in the cart!");
-        }
-        
-        Cart cart = new Cart();
-        cart.setMenuItemId(cartDto.getMenuItemId());
-        cart.setName(cartDto.getName());
-        cart.setRecipe(cartDto.getRecipe());
-        cart.setImage(cartDto.getImage());
-        cart.setPrice(cartDto.getPrice());
-        cart.setQuantity(cartDto.getQuantity());
-        cart.setEmail(cartDto.getEmail());
-        
-        return cartRepository.save(cart);
+        return cartRepository.findByEmailAndMenuItemId(cartDto.getEmail(), cartDto.getMenuItemId())
+            .map(existingItem -> {
+                // Nếu đã tồn tại, tăng số lượng
+                existingItem.setQuantity(existingItem.getQuantity() + cartDto.getQuantity());
+                return cartRepository.save(existingItem);
+            })
+            .orElseGet(() -> {
+                // Nếu chưa tồn tại, tạo mới
+                Cart cart = new Cart();
+                cart.setMenuItemId(cartDto.getMenuItemId());
+                cart.setName(cartDto.getName());
+                cart.setRecipe(cartDto.getRecipe() != null ? cartDto.getRecipe() : "");
+                cart.setImage(cartDto.getImage());
+                cart.setPrice(cartDto.getPrice());
+                cart.setQuantity(cartDto.getQuantity());
+                cart.setEmail(cartDto.getEmail());
+                return cartRepository.save(cart);
+            });
     }
 
     @Override
