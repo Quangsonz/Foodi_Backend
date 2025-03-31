@@ -84,12 +84,28 @@ public class CartController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable String id) {
+    public ResponseEntity<?> deleteCart(@PathVariable String id, Authentication authentication) {
         try {
+            // Kiểm tra item tồn tại
+            Cart cart = cartService.getCartById(id);
+            
+            // Kiểm tra quyền sở hữu
+            if (!cart.getEmail().equals(authentication.getName())) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "You can only delete your own cart items");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+            }
+            
             cartService.deleteCart(id);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
     
@@ -103,11 +119,43 @@ public class CartController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Cart> updateCart(@PathVariable String id, @RequestBody CartDto cartDto) {
+    public ResponseEntity<?> updateCart(@PathVariable String id, @RequestBody CartDto cartDto, Authentication authentication) {
         try {
-            return ResponseEntity.ok(cartService.updateCart(id, cartDto));
+            // Kiểm tra item tồn tại
+            Cart existingCart = cartService.getCartById(id);
+            
+            // Kiểm tra quyền sở hữu
+            if (!existingCart.getEmail().equals(authentication.getName())) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "You can only update your own cart items");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+            }
+            
+            // Kiểm tra dữ liệu
+            if (cartDto.getQuantity() == null || cartDto.getQuantity() < 1) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "Quantity must be greater than 0");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+            
+            // Giữ nguyên thông tin không thay đổi
+            cartDto.setMenuItemId(existingCart.getMenuItemId());
+            cartDto.setName(existingCart.getName());
+            cartDto.setRecipe(existingCart.getRecipe());
+            cartDto.setImage(existingCart.getImage());
+            cartDto.setPrice(existingCart.getPrice());
+            cartDto.setEmail(existingCart.getEmail());
+            
+            Cart updatedCart = cartService.updateCart(id, cartDto);
+            return ResponseEntity.ok(updatedCart);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }

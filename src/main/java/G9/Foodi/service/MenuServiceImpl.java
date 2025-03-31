@@ -1,6 +1,7 @@
 package G9.Foodi.service;
 
 import java.util.List;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Menu createMenuItem(Menu menu) {
+        menu.setCreatedAt(new Date());
         return menuRepository.save(menu);
     }
 
