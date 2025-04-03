@@ -3,6 +3,7 @@ package G9.Foodi.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import G9.Foodi.dto.UserDto;
@@ -15,6 +16,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAllUsers() {
@@ -30,6 +34,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword())); // Mã hóa password
         user.setPhotoURL(userDto.getPhotoURL());
         user.setRole(Role.USER); // Default role
         

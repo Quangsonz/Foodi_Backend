@@ -10,6 +10,7 @@ public class User {
 
     private String name;
     private String email;
+    private String password;
     private String photoURL;
     private Role role = Role.USER;
 
@@ -23,10 +24,11 @@ public class User {
     }
 
     // Constructor đầy đủ tham số
-    public User(String id, String name, String email, String photoURL, Role role) {
+    public User(String id, String name, String email, String password, String photoURL, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.photoURL = photoURL;
         this.role = role;
     }
@@ -54,6 +56,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhotoURL() {
