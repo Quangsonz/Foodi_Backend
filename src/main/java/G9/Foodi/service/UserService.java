@@ -11,4 +11,5 @@ public interface UserService {
     void deleteUser(String id);
     boolean isAdmin(String email);
     User makeAdmin(String id);
+    User updateUser(UserDto userDto);
 }

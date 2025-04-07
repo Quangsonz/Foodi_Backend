@@ -65,4 +65,23 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.ADMIN);
         return userRepository.save(user);
     }
+
+    @Override
+    public User updateUser(UserDto userDto) {
+        User existingUser = userRepository.findByEmail(userDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + userDto.getEmail()));
+        
+        // Update user information
+        existingUser.setName(userDto.getName());
+        if (userDto.getPhotoURL() != null) {
+            existingUser.setPhotoURL(userDto.getPhotoURL());
+        }
+        
+        // Only update password if a new one is provided
+        if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        
+        return userRepository.save(existingUser);
+    }
 }

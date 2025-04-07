@@ -69,4 +69,13 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) {
+        try {
+            return ResponseEntity.ok(userService.updateUser(userDto));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
