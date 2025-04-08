@@ -3,16 +3,16 @@ package G9.Foodi.service;
 import G9.Foodi.dto.ContactDto;
 import G9.Foodi.model.Contact;
 import G9.Foodi.repository.ContactRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ContactService {
-    private final ContactRepository contactRepository;
+    @Autowired
+    private ContactRepository contactRepository;
 
     public Contact createContact(ContactDto contactDto) {
         Contact contact = new Contact();

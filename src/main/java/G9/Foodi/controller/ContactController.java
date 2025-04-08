@@ -3,7 +3,7 @@ package G9.Foodi.controller;
 import G9.Foodi.dto.ContactDto;
 import G9.Foodi.model.Contact;
 import G9.Foodi.service.ContactService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/contact")
-@RequiredArgsConstructor
+@CrossOrigin("http://localhost:5173")
 public class ContactController {
-    private final ContactService contactService;
+    @Autowired
+    private ContactService contactService;
 
     @PostMapping
     public ResponseEntity<Contact> createContact(@RequestBody ContactDto contactDto) {
