@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import G9.Foodi.model.Menu;
 
+import java.util.List;
+
 @Repository
 public interface MenuRepository extends MongoRepository<Menu, String> {
-    // Các phương thức truy vấn tùy chỉnh (nếu cần)
+    List<Menu> findByNameContainingIgnoreCase(String name);
 }

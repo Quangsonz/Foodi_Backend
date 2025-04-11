@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import G9.Foodi.model.Menu;
 import G9.Foodi.service.MenuService;
+import G9.Foodi.repository.MenuRepository;
 
 @RestController
 @RequestMapping("/api/v1/menu")
@@ -26,9 +28,13 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
     
+    @Autowired
+    private MenuRepository menuRepository;
+    
     @GetMapping
     public ResponseEntity<List<Menu>> getAllMenuItems() {
-        return ResponseEntity.ok(menuService.getAllMenuItems());
+        List<Menu> menuItems = menuRepository.findAll();
+        return ResponseEntity.ok(menuItems);
     }
     
     @PostMapping
@@ -62,5 +68,11 @@ public class MenuController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Menu>> searchMenuItems(@RequestParam String query) {
+        List<Menu> menuItems = menuRepository.findByNameContainingIgnoreCase(query);
+        return ResponseEntity.ok(menuItems);
     }
 }
