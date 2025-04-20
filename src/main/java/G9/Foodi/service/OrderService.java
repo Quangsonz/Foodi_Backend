@@ -9,6 +9,7 @@ public interface OrderService {
     Order getOrderById(String id);
     void deleteOrder(String id);
     Order updateOrder(String id, Order orderDetails);
+    Order updateOrderStatus(String id, String status);
     List<Order> getOrdersByUserId(String userId);
     double calculateTotalRevenue();
     long countTotalOrders();

@@ -1,6 +1,6 @@
 package G9.Foodi;
 
-import io.github.cdimascio.dotenv.Dotenv;
+//import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -13,9 +13,9 @@ public class FoodiBackendApplication {
 
     public static void main(String[] args) {
         // Đọc giá trị từ .env
-        Dotenv dotenv = Dotenv.load();
-        String mongoUri = dotenv.get("MONGODB_URI");
-        logger.info("MONGODB_URI from .env: {}", mongoUri);
+//        Dotenv dotenv = Dotenv.load();
+//        String mongoUri = dotenv.get("MONGODB_URI");
+//        logger.info("MONGODB_URI from .env: {}", mongoUri);
 
         // Khởi động ứng dụng Spring Boot
         SpringApplication app = new SpringApplication(FoodiBackendApplication.class);

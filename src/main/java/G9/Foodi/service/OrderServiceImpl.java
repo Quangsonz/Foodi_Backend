@@ -19,7 +19,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     @Override
@@ -55,8 +55,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order updateOrderStatus(String id, String status) {
+        Order order = getOrderById(id);
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
+
+    @Override
     public List<Order> getOrdersByUserId(String userId) {
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findByUserId(userId, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     @Override
@@ -74,7 +81,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getRecentOrders() {
-        // Get the 10 most recent orders sorted by creation date
         return orderRepository.findAll(
             PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"))
         ).getContent();
