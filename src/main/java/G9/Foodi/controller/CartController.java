@@ -1,5 +1,6 @@
 package G9.Foodi.controller;
 
+// Import các thư viện cần thiết
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,31 +25,39 @@ import G9.Foodi.dto.CartDto;
 import G9.Foodi.model.Cart;
 import G9.Foodi.service.CartService;
 
+// Đánh dấu đây là một REST controller, trả về dữ liệu JSON thay vì view
 @RestController
+// Định nghĩa prefix cho tất cả các endpoint trong controller này
 @RequestMapping("/api/v1/carts")
+// Cho phép CORS từ frontend (React) ở địa chỉ này
 @CrossOrigin(origins = "http://localhost:5173")
 public class CartController {
 
+    // Logger để ghi log cho controller này
     private static final Logger logger = Logger.getLogger(CartController.class.getName());
     
+    // Inject CartService để thao tác với logic giỏ hàng
     @Autowired
     private CartService cartService;
     
+    // Lấy danh sách giỏ hàng theo email (chỉ cho phép user lấy giỏ hàng của chính mình)
     @GetMapping
     public ResponseEntity<List<Cart>> getCartsByEmail(@RequestParam String email, Authentication authentication) {
+        // Kiểm tra email trong request có khớp với user đã xác thực không
         if (!email.equals(authentication.getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(cartService.getCartsByEmail(email));
     }
     
+    // Thêm sản phẩm vào giỏ hàng
     @PostMapping
     public ResponseEntity<?> addToCart(@RequestBody CartDto cartDto, Authentication authentication) {
-        // Logging thông tin
+        // Logging thông tin nhận được
         logger.info("Received cart item: " + cartDto);
         logger.info("Authentication: " + (authentication != null ? authentication.getName() : "null"));
         
-        // Kiểm tra xác thực
+        // Kiểm tra xác thực: user phải đăng nhập và email trong cartDto phải khớp với user đã xác thực
         if (authentication == null || !cartDto.getEmail().equals(authentication.getName())) {
             logger.warning("Authentication failed: " + 
                            (authentication == null ? "Authentication is null" : 
@@ -59,7 +68,7 @@ public class CartController {
         }
 
         try {
-            // Kiểm tra dữ liệu
+            // Kiểm tra dữ liệu: menuItemId không được null hoặc rỗng
             if (cartDto.getMenuItemId() == null || cartDto.getMenuItemId().isEmpty()) {
                 logger.warning("MenuItemId is null or empty");
                 Map<String, String> errorResponse = new HashMap<>();
@@ -67,6 +76,7 @@ public class CartController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
             
+            // Gọi service để thêm vào giỏ hàng
             Cart cart = cartService.addToCart(cartDto);
             logger.info("Cart item added successfully: " + cart);
             return new ResponseEntity<>(cart, HttpStatus.CREATED);
@@ -83,6 +93,7 @@ public class CartController {
         }
     }
     
+    // Xóa một item khỏi giỏ hàng theo id (chỉ cho phép xóa item của chính mình)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCart(@PathVariable String id, Authentication authentication) {
         try {
@@ -96,6 +107,7 @@ public class CartController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
             }
             
+            // Xóa item khỏi giỏ hàng
             cartService.deleteCart(id);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
@@ -109,6 +121,7 @@ public class CartController {
         }
     }
     
+    // Lấy thông tin một item trong giỏ hàng theo id
     @GetMapping("/{id}")
     public ResponseEntity<Cart> getCartById(@PathVariable String id) {
         try {
@@ -118,6 +131,7 @@ public class CartController {
         }
     }
     
+    // Cập nhật thông tin một item trong giỏ hàng (chỉ cho phép cập nhật item của chính mình)
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCart(@PathVariable String id, @RequestBody CartDto cartDto, Authentication authentication) {
         try {
@@ -131,7 +145,7 @@ public class CartController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
             }
             
-            // Kiểm tra dữ liệu
+            // Kiểm tra dữ liệu: số lượng phải lớn hơn 0
             if (cartDto.getQuantity() == null || cartDto.getQuantity() < 1) {
                 Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("message", "Quantity must be greater than 0");
@@ -146,6 +160,7 @@ public class CartController {
             cartDto.setPrice(existingCart.getPrice());
             cartDto.setEmail(existingCart.getEmail());
             
+            // Gọi service để cập nhật item trong giỏ hàng
             Cart updatedCart = cartService.updateCart(id, cartDto);
             return ResponseEntity.ok(updatedCart);
         } catch (IllegalArgumentException e) {
