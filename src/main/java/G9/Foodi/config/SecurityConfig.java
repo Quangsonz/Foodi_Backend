@@ -1,23 +1,23 @@
 package G9.Foodi.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.http.HttpMethod;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import G9.Foodi.security.JwtAuthFilter;
-
-import java.util.Arrays;
 
 // Đánh dấu đây là class cấu hình (Configuration) cho Spring
 @Configuration
@@ -72,20 +72,20 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Chỉ cho phép frontend ở địa chỉ này truy cập (cần sửa lại khi deploy production)
-        configuration.setAllowedOrigins(Arrays.asList("http://35.224.60.159:80")); 
-        // Các phương thức HTTP được phép
+        // Thêm các origin thực tế của frontend (cả http và https, cả port nếu có)
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://35.224.60.159", 
+            "http://35.224.60.159:80",
+            "http://35.224.60.159:5173", 
+            "http://localhost:5173", 
+            "http://localhost:3000" 
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT"));
-        // Các header được phép gửi lên server
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-        // Các header được phép trả về cho client
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        // Cho phép gửi cookie, token qua CORS
         configuration.setAllowCredentials(true);
-        // Thời gian cache cấu hình CORS (giây)
         configuration.setMaxAge(3600L);
 
-        // Đăng ký cấu hình CORS cho tất cả các endpoint
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
