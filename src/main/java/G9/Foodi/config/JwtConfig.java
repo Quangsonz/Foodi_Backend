@@ -4,7 +4,7 @@ package G9.Foodi.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-// Đánh dấu class này là một Spring Bean để Spring quản lý
+
 @Component
 // Ánh xạ các thuộc tính có prefix là "jwt" từ file cấu hình vào các trường của class này
 @ConfigurationProperties(prefix = "jwt")

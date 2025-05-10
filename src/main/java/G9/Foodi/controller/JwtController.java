@@ -12,7 +12,7 @@ import G9.Foodi.service.JwtService;
 
 @RestController
 @RequestMapping("/api/v1/jwt")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://35.224.60.159:80")
 public class JwtController {
 
     @Autowired

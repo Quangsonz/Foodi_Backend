@@ -25,56 +25,67 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
+
+    // API lấy danh sách tất cả người dùng
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-    
+
+    // API tạo người dùng mới từ dữ liệu nhận vào dạng UserDto
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
         try {
             return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
+            // Nếu tài khoản đã tồn tại hoặc không hợp lệ, trả về mã lỗi 409
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
-    
+
+    // API xóa người dùng theo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         try {
             userService.deleteUser(id);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
+            // Trả về lỗi 404 nếu không tìm thấy người dùng cần xóa
             return ResponseEntity.notFound().build();
         }
     }
-    
+
+    // API kiểm tra người dùng có quyền admin hay không (xác thực phải trùng email)
     @GetMapping("/admin/{email}")
     public ResponseEntity<Boolean> getAdmin(@PathVariable String email, Authentication authentication) {
-        // Kiểm tra xem email được yêu cầu có khớp với người dùng đã xác thực không
+        // Nếu người dùng được yêu cầu không trùng với người dùng đã xác thực, trả về lỗi 403
         if (!email.equals(authentication.getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
         }
-        
+
+        // Gọi service để kiểm tra vai trò admin
         boolean isAdmin = userService.isAdmin(email);
         return ResponseEntity.ok(isAdmin);
     }
-    
+
+    // API gán quyền admin cho người dùng theo ID
     @PutMapping("/admin/{id}")
     public ResponseEntity<User> makeAdmin(@PathVariable String id) {
         try {
             return ResponseEntity.ok(userService.makeAdmin(id));
         } catch (IllegalArgumentException e) {
+            // Nếu không tìm thấy người dùng, trả về lỗi 404
             return ResponseEntity.notFound().build();
         }
     }
 
+    // API cập nhật thông tin người dùng từ UserDto
     @PutMapping("/update")
     public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) {
         try {
             return ResponseEntity.ok(userService.updateUser(userDto));
         } catch (IllegalArgumentException e) {
+            // Nếu không tìm thấy người dùng cần cập nhật, trả về lỗi 404
             return ResponseEntity.notFound().build();
         }
     }

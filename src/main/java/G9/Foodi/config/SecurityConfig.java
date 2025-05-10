@@ -73,7 +73,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Chỉ cho phép frontend ở địa chỉ này truy cập (cần sửa lại khi deploy production)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
+        configuration.setAllowedOrigins(Arrays.asList("http://35.224.60.159:80")); 
         // Các phương thức HTTP được phép
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT"));
         // Các header được phép gửi lên server
